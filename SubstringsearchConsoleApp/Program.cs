@@ -16,24 +16,26 @@ namespace SubstringsearchConsoleApp
             List<int> list = new List<int>();
             StreamReader sr = new StreamReader("Anna Karenina.txt");
             string text = sr.ReadToEnd();
-
+            string pattern = "This position";
+            //string text = "cheerfullllllllycheerfullyllly";
 
             BruteForceSearching BFS = new BruteForceSearching();
             BouyerMoorSearching BMS = new BouyerMoorSearching();
             Stopwatch stopwatch = new Stopwatch();
 
             stopwatch.Start();
-            list = BFS.FindSubstring(text, "are");
+            list = BFS.FindSubstring(text, pattern);
             stopwatch.Stop();
             Console.WriteLine($"BFS = {stopwatch.ElapsedMilliseconds}");
             Console.WriteLine(list.Count);
-
+            Console.WriteLine();
 
             list.Clear();
             stopwatch.Restart();
-            list = BMS.FindSubstring(text, "are");
+            list = BMS.FindSubstring(text, pattern);
             stopwatch.Stop();
             Console.WriteLine($"BMS = {stopwatch.ElapsedMilliseconds}");
+            Console.WriteLine(list.Count);
 
             /*foreach (int item in list)
             {
