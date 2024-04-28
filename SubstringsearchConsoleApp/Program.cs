@@ -13,13 +13,17 @@ namespace SubstringsearchConsoleApp
     {
         static void Main(string[] args)
         {
+            #region GUS
             List<int> list = new List<int>();
             StreamReader sr = new StreamReader("Anna Karenina.txt");
+            //StreamReader sr = new StreamReader("input.txt");
             string text = sr.ReadToEnd();
-            string pattern = "Anna";
+            //string pattern = "Anna";
+            string pattern = "Анна";
 
             BruteForceSearching BFS = new BruteForceSearching();
             BouyerMoorSearching BMS = new BouyerMoorSearching();
+            RabinKarpSearching RKS = new RabinKarpSearching();
             Stopwatch stopwatch = new Stopwatch();
 
             //BruteForce
@@ -37,12 +41,29 @@ namespace SubstringsearchConsoleApp
             stopwatch.Stop();
             Console.WriteLine($"BMS = {stopwatch.ElapsedMilliseconds}");
             Console.WriteLine(list.Count);
+            Console.WriteLine();
+            #endregion
 
-            /*foreach (int item in list)
-            {
-                Console.WriteLine(item);
-            }*/
+            #region SOKOL
 
+            //RabinKarpSearching
+            list.Clear();
+            stopwatch.Restart();
+            //list =RKS.FindSubstring(text,pattern);
+            stopwatch.Stop();
+            Console.WriteLine($"RKS = {stopwatch.ElapsedMilliseconds}");
+            Console.WriteLine(list.Count);
+            Console.WriteLine();
+
+            //KnutMorrisPrat
+            KnutMorrisPratSearching KMP=new KnutMorrisPratSearching();
+            list.Clear();
+            stopwatch.Restart();
+            list =KMP.FindSubstring(text,pattern);
+            stopwatch.Stop();
+            Console.WriteLine($"KMP = {stopwatch.ElapsedMilliseconds}");
+            Console.WriteLine(list.Count);
+            #endregion
             Console.ReadKey();
         }
     }

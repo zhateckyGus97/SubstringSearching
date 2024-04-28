@@ -34,7 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SubstringSearchLibrary">
-      <HintPath>..\SubstringSearchLibrary\bin\Debug\SubstringSearchLibrary.dll</HintPath>
+      <HintPath>..\SubstringSearchLibrary\obj\Debug\SubstringSearchLibrary.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
