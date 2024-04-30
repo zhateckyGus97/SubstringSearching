@@ -49,7 +49,7 @@ namespace SubstringsearchConsoleApp
             //RabinKarpSearching
             list.Clear();
             stopwatch.Restart();
-            //list =RKS.FindSubstring(text,pattern);
+            list =RKS.FindSubstring(text,pattern);
             stopwatch.Stop();
             Console.WriteLine($"RKS = {stopwatch.ElapsedMilliseconds}");
             Console.WriteLine(list.Count);

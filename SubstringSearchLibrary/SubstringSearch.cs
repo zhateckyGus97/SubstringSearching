@@ -162,7 +162,6 @@ namespace SubstringSearchLibrary
             return Positions;
         }
     }
-
     public class KnutMorrisPratSearching : ISubstringSearch
     {
         int[] PrefixArray;
@@ -215,32 +214,22 @@ namespace SubstringSearchLibrary
     }
     public class RabinKarpSearching : ISubstringSearch
     {
-        private readonly GetPrimeNumber _primeNumber = new GetPrimeNumber();
-        private int d = 0;//размерность алфавита
-        private int q = 0;//значение для ХЭША
-        private int p = 0;//код паттерна
-        private int t = 0;//код подстроки текста
-        private int n = 0;
-        private int m = 0;
+        private int d = 256;//размерность алфавита
+        private int q = 101;//значение для ХЭША
+        private int p;//код паттерна
+        private int t;//код подстроки текста
+        private int n = 0;//длинна текста
+        private int m = 0;//длинна паттерна
         private int h = 0;
         private Dictionary<char, int> Alphabet = new Dictionary<char, int>();
-        public RabinKarpSearching() 
-        {
-            q = _primeNumber.Min();
-        }
-
         public List<int> FindSubstring(string text, string pattern)
         {
             List<int>Answer=new List<int>();
             m=pattern.Length;
             n=text.Length;
-            FillAlphabet(text);
-            h=Convert.ToInt32((Math.Pow(d,m-1)))%q;
-            for(int i=0;i<m;i++)
-            {
-                p += (d * p + Alphabet[pattern[i]]) % q;
-                t += (d * t + Alphabet[text[i]]) % q;
-            }
+            p = CalculateControlSum(pattern,q,d);
+            t = CalculateControlSum(text.Substring(0,m), q, d);
+            h =Convert.ToInt32((Math.Pow(d,m-1)))%q;
             for(int s=0;s<n-m+1;s++)
             {
                 if(p==t)
@@ -257,65 +246,24 @@ namespace SubstringSearchLibrary
                 }
                 if(s<n-m)
                 {
-                    #region 1 способ
-                    //t = int.Parse(((d * (t - Alphabet[text[s + 1]] * h)).ToString() + Alphabet[text[s + m]].ToString())) % q;
-                    #endregion
-                    #region 2 способ
-                    t = 0;
-                    for (int i = s + 1; i < s + m + 1; i++)
+                    t = (d*(t - text[s]*h)+text[s+m])%q;
+                    if(t<0)
                     {
-                        t += (d * t + Alphabet[text[i]]) % q;
+                        t+=q;
                     }
-                    #endregion
-                    #region 3 способ
-                    //t = 10 * (s - Convert.ToInt32(Math.Pow(10, m - 1)) * Alphabet[text[s + 1]]) + Alphabet[text[s + m]];
-                    #endregion
                 }
             }
             return Answer;
         }
-        private void FillAlphabet(string text)
+        private int CalculateControlSum(string str, int q,int d)
         {
-            int cnt = 0;
-            foreach (char c in text)
+            int sum = 0;
+            foreach(char c in str)
             {
-                if (!Alphabet.ContainsKey(c))
-                {
-                    Alphabet.Add(c, cnt);
-                    cnt++;
-                    if(cnt>q)
-                    {
-                        q=_primeNumber.Next();
-                    }
-                }
+                sum=(sum*d+c)%q;
             }
-            d = Alphabet.Count();
+            return sum;
         }
     }
-    public class GetPrimeNumber
-    {
-        public int _current;
-        readonly int[] _primes = { 11, 29, 61, 127, 257, 523, 1087,
-            2213, 4519, 9619, 19717, 40009, 62851, 75431, 90523,
-            108631, 130363, 156437,  187751, 225307, 270371, 324449,
-            389357, 467237, 560689, 672827, 807403, 968897,
-            1162687, 1395263, 1674319, 2009191, 2411033, 2893249, 3471899, 4166287,
-            4999559, 5999471, 7199369};
-        public int Min() 
-        {
-            _current = 0;
-            return _primes[_current];
-        }
-        public int Next()
-        {
-            if (_current < _primes.Length)
-            {
-                var value = _primes[_current];
-                _current++;
-                return value;
-            }
-            _current++;
-            return (_current - _primes.Length) * _primes[_primes.Length - 1];
-        }
-    }
+
 }
