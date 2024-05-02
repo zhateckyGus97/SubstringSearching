@@ -18,13 +18,17 @@ namespace SubstringSearchLibrary
 
         public List<int> FindSubstring(string text, string pattern)
         {
-            char[] buffer = new char[pattern.Length];
-
-            for (int i = 0; i <= text.Length - pattern.Length; i++)
+            if(pattern.Length > 0)
             {
-                if (text.Substring(i, pattern.Length) == pattern)
+                Positions = new List<int>();
+                char[] buffer = new char[pattern.Length];
+
+                for (int i = 0; i <= text.Length - pattern.Length; i++)
                 {
-                    Positions.Add(i);
+                    if (text.Substring(i, pattern.Length) == pattern)
+                    {
+                        Positions.Add(i);
+                    }
                 }
             }
 
@@ -113,51 +117,59 @@ namespace SubstringSearchLibrary
 
         public List<int> FindSubstring(string text, string pattern)
         {
-            int match_cnt = 0, pattern_len = pattern.Length, pattern_pos = pattern_len - 1;
-            bool IsJump = false;
-            string current_suffics;
-            DisplacementSymbolsTableCreating(pattern);
-            DisplacementSufficsTableCreating(pattern);
-
-            for (int i = pattern.Length - 1; i < text.Length;)
+            if (pattern.Length > 0)
             {
-                IsJump = false;
-                match_cnt = 0;
-                pattern_pos = pattern_len - 1;
-                current_suffics = "";
-                while (i >= 0 && pattern_pos >= 0 && text[i] == pattern[pattern_pos]) // пока буква теккста совпадает с буквой паттерна
-                {
-                    match_cnt++;
-                    current_suffics = current_suffics.Insert(0, text[i].ToString());
-                    i--;
-                    pattern_pos--;
-                }
+                Positions = new List<int>();
+                SymbolsDisplacement = new List<KeyValuePair<char, int>>();
+                SufficsDisplacement = new Dictionary<string, int>();
 
-                if (match_cnt == pattern.Length) // совпадение найдено
+                int match_cnt = 0, pattern_len = pattern.Length, pattern_pos = pattern_len - 1;
+                bool IsJump = false;
+                string current_suffics;
+                DisplacementSymbolsTableCreating(pattern);
+                DisplacementSufficsTableCreating(pattern);
+
+                for (int i = pattern.Length - 1; i < text.Length;)
                 {
-                    Positions.Add(i);
-                    i += pattern_len + 1;
-                }
-                else
-                {
-                    for (int j = 0; j < SymbolsDisplacement.Count; j++)
+                    IsJump = false;
+                    match_cnt = 0;
+                    pattern_pos = pattern_len - 1;
+                    current_suffics = "";
+                    while (i >= 0 && pattern_pos >= 0 && text[i] == pattern[pattern_pos]) // пока буква теккста совпадает с буквой паттерна
                     {
-                        if (text[i] == SymbolsDisplacement[j].Key)
-                        {
-                            if (!SufficsDisplacement.ContainsKey(current_suffics)) // если нету такого суффикса в словаре
-                                i += SymbolsDisplacement[j].Value;
-                            else
-                                i += Math.Max(SymbolsDisplacement[j].Value, SufficsDisplacement[current_suffics]);
-                            IsJump = true;
-                            break;
-                        }
+                        match_cnt++;
+                        current_suffics = current_suffics.Insert(0, text[i].ToString());
+                        i--;
+                        pattern_pos--;
                     }
-                    if (!IsJump) // если не нашли символ из смещений
+
+                    if (match_cnt == pattern.Length) // совпадение найдено
                     {
-                        i += pattern_len;
+                        Positions.Add(i + 1);
+                        i += pattern_len + 1;
+                    }
+                    else
+                    {
+                        for (int j = 0; j < SymbolsDisplacement.Count; j++)
+                        {
+                            if (text[i] == SymbolsDisplacement[j].Key)
+                            {
+                                if (!SufficsDisplacement.ContainsKey(current_suffics)) // если нету такого суффикса в словаре
+                                    i += SymbolsDisplacement[j].Value;
+                                else
+                                    i += Math.Max(SymbolsDisplacement[j].Value, SufficsDisplacement[current_suffics]);
+                                IsJump = true;
+                                break;
+                            }
+                        }
+                        if (!IsJump) // если не нашли символ из смещений
+                        {
+                            i += pattern_len;
+                        }
                     }
                 }
             }
+            
 
             return Positions;
         }
@@ -171,25 +183,32 @@ namespace SubstringSearchLibrary
         public List<int> FindSubstring(string text, string pattern)
         {
             List<int> result = new List<int>();
-            PrefixArray = new int[pattern.Length];
-            PrefixArray = PrefixFunction(pattern);
-            int k = 0;
-            for(int i=0;i<text.Length;i++)
+
+            if(pattern.Length > 0)
             {
-                while (k > 0 && pattern[k] != text[i])
+                PrefixArray = new int[pattern.Length];
+                PrefixArray = PrefixFunction(pattern);
+                int k = 0;
+                for (int i = 0; i < text.Length; i++)
                 {
-                    k = PrefixArray[k-1];
-                }
-                if (text[i] == pattern[k])
-                {
-                    k+=1;
-                }
-                if(k==pattern.Length)
-                {
-                    result.Add(i-pattern.Length+1);
-                    k = 0;
+                    while (k > 0 && pattern[k] != text[i])
+                    {
+                        k = PrefixArray[k - 1];
+                    }
+                    if (pattern.Length > 0 && text[i] == pattern[k])
+                    {
+                        k += 1;
+                    }
+                    if (k == pattern.Length)
+                    {
+                        result.Add(i - pattern.Length + 1);
+                        k = 0;
+                        if (pattern.Length > 1)
+                            i--;
+                    }
                 }
             }
+            
             return result;
         }
         private int[] PrefixFunction(string text)
@@ -214,47 +233,60 @@ namespace SubstringSearchLibrary
     }
     public class RabinKarpSearching : ISubstringSearch
     {
-        private int d = 256;//размерность алфавита
-        private int q = 101;//значение для ХЭША
-        private int p;//код паттерна
-        private int t;//код подстроки текста
-        private int n = 0;//длинна текста
-        private int m = 0;//длинна паттерна
-        private int h = 0;
+        private int d = 256; //размерность алфавита
+        private int q = 101; //значение для ХЭША
+        private int p;       //код паттерна
+        private long t;       //код подстроки текста
+        private int n = 0;   //длинна текста
+        private int m = 0;   //длинна паттерна
+        private long h = 1;
         private Dictionary<char, int> Alphabet = new Dictionary<char, int>();
         public List<int> FindSubstring(string text, string pattern)
         {
-            List<int>Answer=new List<int>();
-            m=pattern.Length;
-            n=text.Length;
-            p = CalculateControlSum(pattern,q,d);
-            t = CalculateControlSum(text.Substring(0,m), q, d);
-            h =Convert.ToInt32((Math.Pow(d,m-1)))%q;
-            for(int s=0;s<n-m+1;s++)
+            List<int> Answer = new List<int>();
+
+            if (pattern.Length > 0)
             {
-                if(p==t)
+                h = 1;
+
+                m = pattern.Length;
+                n = text.Length;
+                p = CalculateControlSum(pattern, q, d);
+                t = CalculateControlSum(text.Substring(0, m), q, d);
+
+                for (int i = 0; i < m - 1; i++)
                 {
-                    string subst = "";
-                    for(int i=0;i<m;i++)
-                    {
-                        subst += text[i+s];
-                    }
-                    if(subst==pattern)
-                    {
-                        Answer.Add(s);
-                    }
+                    h = (h * d) % q;
                 }
-                if(s<n-m)
+
+                for (int s = 0; s < n - m + 1; s++)
                 {
-                    t = (d*(t - text[s]*h)+text[s+m])%q;
-                    if(t<0)
+                    if (p == t)
                     {
-                        t+=q;
+                        string subst = "";
+                        for (int i = 0; i < m; i++)
+                        {
+                            subst += text[i + s];
+                        }
+                        if (subst == pattern)
+                        {
+                            Answer.Add(s);
+                        }
+                    }
+                    if (s < n - m)
+                    {
+                        t = (d * (t - text[s] * h) + text[s + m]) % q;
+                        if (t < 0)
+                        {
+                            t += q;
+                        }
                     }
                 }
             }
+            
             return Answer;
         }
+
         private int CalculateControlSum(string str, int q,int d)
         {
             int sum = 0;
