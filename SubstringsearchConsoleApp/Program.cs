@@ -14,12 +14,11 @@ namespace SubstringsearchConsoleApp
     {
         static void Main(string[] args)
         {
-            
             List<int> list = new List<int>();
             StreamReader sr = new StreamReader("Anna Karenina.txt");
             string text = sr.ReadToEnd().ToLower();
             //string text = "aaaaaaaaaa";
-            string pattern = "anna";
+            string pattern = "stepan arkadyevitch";
 
             BruteForceSearching BFS = new BruteForceSearching();
             BouyerMoorSearching BMS = new BouyerMoorSearching();
@@ -27,7 +26,7 @@ namespace SubstringsearchConsoleApp
             KnutMorrisPratSearching KMP = new KnutMorrisPratSearching();
             Stopwatch stopwatch = new Stopwatch();
 
-            #region GUS
+            #region BFS and BMS
 
             //BruteForce
             stopwatch.Start();
@@ -47,7 +46,7 @@ namespace SubstringsearchConsoleApp
             Console.WriteLine();
             #endregion
 
-            #region SOKOL
+            #region RKS and KMPS
 
             //RabinKarpSearching
             list.Clear();
@@ -61,7 +60,7 @@ namespace SubstringsearchConsoleApp
             //KnutMorrisPrat
             list.Clear();
             stopwatch.Restart();
-            list =KMP.FindSubstring(text,pattern);
+            list = KMP.FindSubstring(text,pattern);
             stopwatch.Stop();
             Console.WriteLine($"KnutMorrisPrattSearching: {stopwatch.ElapsedMilliseconds} ms");
             Console.WriteLine("Matches: " + list.Count);

@@ -25,10 +25,23 @@ namespace SubstringSearchLibrary
 
                 for (int i = 0; i <= text.Length - pattern.Length; i++)
                 {
-                    if (text.Substring(i, pattern.Length) == pattern)
+                    bool flag = false;
+                    for(int j = 0; j < pattern.Length; j++)
+                    {
+                        if (!(text[i + j] == pattern[j]))
+                        {
+                            flag = true;
+                            break;
+                        }
+                    }
+
+                    if(!flag)
+                        Positions.Add(i);
+
+                    /*if (text.Substring(i, pattern.Length) == pattern)
                     {
                         Positions.Add(i);
-                    }
+                    }*/
                 }
             }
 
@@ -38,6 +51,7 @@ namespace SubstringSearchLibrary
     public class BouyerMoorSearching : ISubstringSearch
     {
         List<int> Positions = new List<int>();
+
         List<KeyValuePair<char, int>> SymbolsDisplacement = new List<KeyValuePair<char, int>>();
         Dictionary<string, int> SufficsDisplacement = new Dictionary<string, int>();
 
@@ -87,19 +101,32 @@ namespace SubstringSearchLibrary
         private void DisplacementSufficsTableCreating(string pattern)
         {
             bool IsContain = false;
-            string suffics = "";
+            StringBuilder suffics;
+            StringBuilder curr_suffics;
             int suffics_len = 1;
 
             for (int i = pattern.Length - 1; i >= 0; i--) // выделяем каждый суффикс
             {
-                suffics = pattern.Substring(i, suffics_len);
+                suffics = new StringBuilder();
+                for (int j = 0; j < suffics_len; j++)
+                {
+                    suffics.Append(pattern[i + j]);
+                }
+                //suffics = pattern.Substring(i, suffics_len);
                 IsContain = false;
 
                 for (int j = i - 1; j >= 0; j--)
                 {
-                    if (pattern.Substring(j, suffics_len) == suffics)
+                    curr_suffics = new StringBuilder();
+
+                    for (int k = 0; k < suffics_len; k++)
                     {
-                        SufficsDisplacement.Add(suffics, i - j);
+                        curr_suffics.Append(pattern[j + k]);
+                    }
+
+                    if (curr_suffics.ToString() == suffics.ToString())
+                    {
+                        SufficsDisplacement.Add(suffics.ToString(), i - j);
                         IsContain = true;
                         break;
                     }
@@ -107,12 +134,11 @@ namespace SubstringSearchLibrary
 
                 if (!IsContain)
                 {
-                    SufficsDisplacement.Add(suffics, pattern.Length);
+                    SufficsDisplacement.Add(suffics.ToString(), pattern.Length);
                 }
 
                 suffics_len++; // увеличиаем длину суффикса
             }
-
         }
 
         public List<int> FindSubstring(string text, string pattern)
@@ -202,9 +228,7 @@ namespace SubstringSearchLibrary
                     if (k == pattern.Length)
                     {
                         result.Add(i - pattern.Length + 1);
-                        k = 0;
-                        if (pattern.Length > 1)
-                            i--;
+                        k = PrefixArray[k - 1];
                     }
                 }
             }

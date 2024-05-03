@@ -49,7 +49,7 @@ namespace SubstringSearchUnitTests
                 text = sr.ReadToEnd().ToLower();
             }
 
-            int number = 100;
+            int number = 150;
             Regex rg = new Regex(@"\w+");
             var bag = new HashSet<string>();
             var matches = rg.Matches(text);
