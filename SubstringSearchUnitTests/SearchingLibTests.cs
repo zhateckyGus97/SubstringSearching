@@ -44,7 +44,7 @@ namespace SubstringSearchUnitTests
             };
 
             string text;
-            using (var sr = new StreamReader("Anna Karenina.txt"))
+            using (var sr = new StreamReader("anna.txt"))
             {
                 text = sr.ReadToEnd().ToLower();
             }
@@ -83,7 +83,7 @@ namespace SubstringSearchUnitTests
 
             string text;
             string pattern = "jhsdgfushdfshddfguhge";
-            using (var sr = new StreamReader("Anna Karenina.txt"))
+            using (var sr = new StreamReader("anna.txt"))
             {
                 text = sr.ReadToEnd().ToLower();
             }
@@ -109,7 +109,7 @@ namespace SubstringSearchUnitTests
 
             string text;
             string pattern = "";
-            using (var sr = new StreamReader("Anna Karenina.txt"))
+            using (var sr = new StreamReader("anna.txt"))
             {
                 text = sr.ReadToEnd().ToLower();
             }

@@ -38,10 +38,6 @@ namespace SubstringSearchLibrary
                     if(!flag)
                         Positions.Add(i);
 
-                    /*if (text.Substring(i, pattern.Length) == pattern)
-                    {
-                        Positions.Add(i);
-                    }*/
                 }
             }
 
@@ -280,26 +276,30 @@ namespace SubstringSearchLibrary
 
                 for (int i = 0; i < m - 1; i++)
                 {
-                    h = (h * d) % q;
+                    h = (h << 8) % q;
                 }
 
                 for (int s = 0; s < n - m + 1; s++)
                 {
                     if (p == t)
                     {
-                        string subst = "";
+                        bool f = true;
                         for (int i = 0; i < m; i++)
                         {
-                            subst += text[i + s];
+                            if (text[s + i] != pattern[i])
+                            {
+                                f=false; 
+                                break;
+                            }
                         }
-                        if (subst == pattern)
+                        if(f)
                         {
                             Answer.Add(s);
                         }
                     }
                     if (s < n - m)
                     {
-                        t = (d * (t - text[s] * h) + text[s + m]) % q;
+                        t = (((t - text[s] * h)<<8) + text[s + m]) % q;
                         if (t < 0)
                         {
                             t += q;
@@ -316,7 +316,7 @@ namespace SubstringSearchLibrary
             int sum = 0;
             foreach(char c in str)
             {
-                sum=(sum*d+c)%q;
+                sum=((sum<<8)+c)%q;
             }
             return sum;
         }

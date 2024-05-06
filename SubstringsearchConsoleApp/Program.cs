@@ -15,10 +15,10 @@ namespace SubstringsearchConsoleApp
         static void Main(string[] args)
         {
             List<int> list = new List<int>();
-            StreamReader sr = new StreamReader("Anna Karenina.txt");
+            StreamReader sr = new StreamReader("anna.txt");
             string text = sr.ReadToEnd().ToLower();
             //string text = "aaaaaaaaaa";
-            string pattern = "stepan arkadyevitch";
+            string pattern = "но";
 
             BruteForceSearching BFS = new BruteForceSearching();
             BouyerMoorSearching BMS = new BouyerMoorSearching();
